@@ -10,7 +10,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 @Module({
   imports: [
     MongooseModule.forRoot(
-      'mongodb+srv://dev:GpPVIqyRS1hndS7r@cluster0-tcpse.mongodb.net/chatbox?retryWrites=true&w=majority',
+      'mongodb+srv://dev:GpPVIqyRS1hndS7r@cluster0-tcpse.mongodb.net/chatboxx?retryWrites=true&w=majority',
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
