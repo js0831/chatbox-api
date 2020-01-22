@@ -42,6 +42,19 @@ export class UserController {
             };
     }
 
+    @Get(':id/')
+    @UseGuards(AuthGuard)
+    async getUsers(
+        @Param() params,
+    ): Promise<ResponseModel<UserInterface[]>> {
+        const users = await this.srv.getUsers(params.id);
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'success',
+            data: users,
+        };
+    }
+
     // constructor(
     //     private srv: UserService,
     //     private conversationService: ConversationService,

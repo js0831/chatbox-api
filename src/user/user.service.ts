@@ -12,13 +12,30 @@ export class UserService {
     ) {}
 
     async findUserByAccountId(id: string): Promise<UserInterface> {
-        return await this.userModel.findOne({ accountId: id })
-        .exec();
+        return await this.userModel.findOne({ accountId: id }).select(`
+            firstname
+            lastname
+            email
+            username
+        `).exec();
     }
 
     async create(createUserDto: UserDto): Promise<UserInterface> {
         const createdUser = new this.userModel(createUserDto);
         return await createdUser.save();
+    }
+
+    /**
+     * Get user list
+     * not friend, not yet invited, no you
+     */
+    async getUsers(id: string) {
+        return await this.userModel.find({ _id: { $ne: id } }).select(`
+            firstname
+            lastname
+            email
+            username
+        `).exec();
     }
 
     // async getUserFriends(id: string, type: string): Promise<UserInterface> {
