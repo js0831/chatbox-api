@@ -12,7 +12,7 @@ export const UserSchema = new mongoose.Schema({
   },
   lastname: {
       type: String,
-      // required: true,
+      required: true,
   },
   email: {
       type: String,
@@ -23,6 +23,14 @@ export const UserSchema = new mongoose.Schema({
       required: true,
   },
   friends: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }],
+  friendRequest: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }],
+  invites: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   }],

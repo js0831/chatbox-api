@@ -5,6 +5,7 @@ import { UserService } from './user.service';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { ConversationService } from 'src/conversation/conversation.service';
 import { UserInterface } from './interfaces/user.interface';
+import { PaginationInterface } from 'src/shared/interface/pagination.interface';
 
 @Controller('user')
 export class UserController {
@@ -42,16 +43,105 @@ export class UserController {
             };
     }
 
-    @Get(':id/')
+    @Get(':id/:page/:limit')
     @UseGuards(AuthGuard)
     async getUsers(
         @Param() params,
-    ): Promise<ResponseModel<UserInterface[]>> {
-        const users = await this.srv.getUsers(params.id);
+    ): Promise<ResponseModel<{
+        total: number,
+        list: UserInterface[],
+    }>> {
+
+        const pagination: PaginationInterface = {
+            skip: (params.limit * params.page),
+            limit: parseInt(params.limit, 0),
+        };
+
+        const users = await this.srv.getUsers(params.id, pagination);
         return {
             statusCode: HttpStatus.OK,
             message: 'success',
             data: users,
+        };
+    }
+
+    @Post('invite')
+    @UseGuards(AuthGuard)
+    async invite(
+        @Body() {userId, byUserId}: any,
+    ): Promise<ResponseModel<any>> {
+        await this.srv.invite(userId, byUserId);
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'success',
+        };
+    }
+
+    @Post('invite/cancel')
+    @UseGuards(AuthGuard)
+    async cancelInvitation(
+        @Body() {by, to}: any,
+    ): Promise<ResponseModel<any>> {
+        await this.srv.cancelInvitation(by, to);
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'success',
+        };
+    }
+
+    @Get(':id/friend/request')
+    @UseGuards(AuthGuard)
+    async getFriendRequest(
+        @Param() params,
+    ): Promise<ResponseModel<UserInterface[]>> {
+        const users = await this.srv.getFriendRequest(params.id);
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'success',
+            data: users,
+        };
+    }
+
+    @Post('unfriend')
+    @UseGuards(AuthGuard)
+    async unfriend(
+        @Body() {who, by}: any,
+    ): Promise<ResponseModel<any>> {
+        await this.srv.unfriend(who, by);
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'success',
+        };
+    }
+
+    @Get(':id/friends')
+    @UseGuards(AuthGuard)
+    async getFriends(
+        @Param() params,
+    ): Promise<ResponseModel<UserInterface[]>> {
+        const user = await this.srv.getFriends(params.id);
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'success',
+            data: user[0].friends,
+        };
+    }
+
+    @Post('friend/request/:respond')
+    @UseGuards(AuthGuard)
+    async respondToFriendRequest(
+        @Param() params,
+        @Body() {by, to}: any,
+    ): Promise<ResponseModel<any>> {
+        if (params.respond === 'reject') {
+            await this.srv.rejectFriendRequest(by, to);
+        } else
+        if (params.respond === 'accept') {
+            await this.srv.acceptFriendRequest(by, to);
+        }
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'success',
         };
     }
 
@@ -86,17 +176,7 @@ export class UserController {
     //     };
     // }
 
-    // @Post('invite')
-    // @UseGuards(AuthGuard)
-    // async invite(
-    //     @Body() {by, who}: any,
-    // ): Promise<ResponseModel> {
-    //     await this.srv.invite(by, who);
-    //     return {
-    //         statusCode: HttpStatus.OK,
-    //         message: 'success',
-    //     };
-    // }
+    
 
     // @Post('invite/cancel')
     // @UseGuards(AuthGuard)
