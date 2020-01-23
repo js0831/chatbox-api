@@ -51,13 +51,34 @@ export class UserController {
         total: number,
         list: UserInterface[],
     }>> {
+        return await this.getUserList(params);
+    }
+
+    @Get(':id/:search/:page/:limit')
+    @UseGuards(AuthGuard)
+    async getUsersWithSearch(
+        @Param() params,
+    ): Promise<ResponseModel<{
+        total: number,
+        list: UserInterface[],
+    }>> {
+        return await this.getUserList(params);
+    }
+
+    private async getUserList(params) {
+        const {
+            id,
+            page,
+            limit,
+            search,
+        } = params;
 
         const pagination: PaginationInterface = {
-            skip: (params.limit * params.page),
-            limit: parseInt(params.limit, 0),
+            skip: (limit * page),
+            limit: parseInt(limit, 0),
         };
 
-        const users = await this.srv.getUsers(params.id, pagination);
+        const users = await this.srv.getUsers({id, search, pagination});
         return {
             statusCode: HttpStatus.OK,
             message: 'success',
@@ -176,7 +197,6 @@ export class UserController {
     //     };
     // }
 
-    
 
     // @Post('invite/cancel')
     // @UseGuards(AuthGuard)

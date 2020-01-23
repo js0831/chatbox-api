@@ -31,25 +31,43 @@ export class UserService {
      * Get user list
      * not friend, not yet invited, no you
      */
-    async getUsers(id: string, pagination: PaginationInterface) {
+    async getUsers(params: {
+        id: string,
+        search?: string,
+        pagination: PaginationInterface,
+    }) {
 
         const query = [
             {
                 $match: {
-                    _id: { $ne: mongoose.Types.ObjectId(id) },
-                    friends: { $nin: [id] },
-                    friendRequest: { $nin: [id] },
-                    invites: { $nin: [id] },
+                    _id: { $ne: mongoose.Types.ObjectId(params.id) },
+                    friends: { $nin: [params.id] },
+                    friendRequest: { $nin: [params.id] },
+                    invites: { $nin: [params.id] },
                 },
             },
         ];
+
+        if ( params.search && params.search.trim().length > 0 ) {
+            query[0].$match = {
+                ...query[0].$match,
+                ...{
+                    $or : [
+                        { email: { $regex: params.search, $options: 'i' } },
+                        { firstname: { $regex: params.search, $options: 'i' } },
+                        { lastname: { $regex: params.search, $options: 'i' } },
+                    ],
+                },
+            };
+        }
+
         const result = await this.userModel.aggregate([
             {
               $facet: {
                 list: [
                     ...query,
-                    { $skip: pagination.skip },
-                    { $limit: pagination.limit },
+                    { $skip: params.pagination.skip },
+                    { $limit: params.pagination.limit },
                 ],
                 total: [
                     ...query,
@@ -218,5 +236,5 @@ export class UserService {
     //     return (result.invitations.length) + (result.confirmations.length);
     // }
 
-    
+
 }
