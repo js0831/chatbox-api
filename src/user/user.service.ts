@@ -100,12 +100,26 @@ export class UserService {
     /**
      * TODO: CREATE WITH PAGINATION
      */
-    async getFriends(id: string) {
-        return await this.userModel.find({
-            _id: id,
-        }).populate('friends').select(`
-            friends
-        `).exec();
+    async getFriends(params: {
+        id: string,
+        search?: string,
+        pagination: PaginationInterface,
+    }) {
+        const searchKey = params.search ? params.search.trim() : '';
+        const query = [
+            {
+                $match: {
+                    _id: { $ne: mongoose.Types.ObjectId(params.id) },
+                    friends: { $in: [mongoose.Types.ObjectId(params.id)] },
+                    $or : [
+                        { email: { $regex: searchKey, $options: 'i' } },
+                        { firstname: { $regex: searchKey, $options: 'i' } },
+                        { lastname: { $regex: searchKey, $options: 'i' } },
+                    ],
+                },
+            },
+        ];
+        return await this.getAllFriends(query, params.pagination);
     }
 
     async invite(userId: string, byUserID: string) {
@@ -119,9 +133,6 @@ export class UserService {
         );
     }
 
-    /**
-     * TODO: CREATE WITH PAGINATION
-     */
     async getFriendRequest(params: {
         id: string,
         search?: string,

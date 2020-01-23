@@ -140,16 +140,36 @@ export class UserController {
         };
     }
 
-    @Get(':id/friends')
+    @Get(':id/friends/:search/:page/:limit')
     @UseGuards(AuthGuard)
     async getFriends(
         @Param() params,
-    ): Promise<ResponseModel<UserInterface[]>> {
-        const user = await this.srv.getFriends(params.id);
+    ): Promise<ResponseModel<{
+        total: number,
+        list: UserInterface[],
+    }>> {
+        const {
+            id,
+            page,
+            limit,
+            search,
+        } = params;
+
+        const pagination: PaginationInterface = {
+            skip: (limit * page),
+            limit: parseInt(limit, 0),
+        };
+
+        const user = await this.srv.getFriends({
+            id,
+            pagination,
+            search,
+        });
+
         return {
             statusCode: HttpStatus.OK,
             message: 'success',
-            data: user[0].friends,
+            data: user,
         };
     }
 
