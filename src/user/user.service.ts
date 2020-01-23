@@ -37,50 +37,25 @@ export class UserService {
         pagination: PaginationInterface,
     }) {
 
+        const searchKey = params.search ? params.search.trim() : '';
         const query = [
             {
                 $match: {
                     _id: { $ne: mongoose.Types.ObjectId(params.id) },
-                    friends: { $nin: [params.id] },
-                    friendRequest: { $nin: [params.id] },
-                    invites: { $nin: [params.id] },
+                    friends: { $nin: [mongoose.Types.ObjectId(params.id)] },
+                    friendRequest: { $nin: [mongoose.Types.ObjectId(params.id)] },
+                    invites: { $nin: [mongoose.Types.ObjectId(params.id)] },
+
+                    $or : [
+                        { email: { $regex: searchKey, $options: 'i' } },
+                        { firstname: { $regex: searchKey, $options: 'i' } },
+                        { lastname: { $regex: searchKey, $options: 'i' } },
+                    ],
                 },
             },
         ];
 
-        if ( params.search && params.search.trim().length > 0 ) {
-            query[0].$match = {
-                ...query[0].$match,
-                ...{
-                    $or : [
-                        { email: { $regex: params.search, $options: 'i' } },
-                        { firstname: { $regex: params.search, $options: 'i' } },
-                        { lastname: { $regex: params.search, $options: 'i' } },
-                    ],
-                },
-            };
-        }
-
-        const result = await this.userModel.aggregate([
-            {
-              $facet: {
-                list: [
-                    ...query,
-                    { $skip: params.pagination.skip },
-                    { $limit: params.pagination.limit },
-                ],
-                total: [
-                    ...query,
-                    { $count: 'total' },
-                ],
-              },
-            },
-        ]);
-
-        return {
-            total: result[0].total[0].total,
-            list: result[0].list,
-        };
+        return await this.getAllFriends(query, params.pagination);
 
         // return await this.userModel.find({
         //     _id: { $ne: id },
@@ -96,6 +71,30 @@ export class UserService {
         //     email
         //     username
         // `).exec();
+    }
+
+    private async getAllFriends(query: any, pagination: PaginationInterface) {
+
+        const result = await this.userModel.aggregate([
+            {
+              $facet: {
+                list: [
+                    ...query,
+                    { $skip: pagination.skip },
+                    { $limit: pagination.limit },
+                ],
+                total: [
+                    ...query,
+                    { $count: 'total' },
+                ],
+              },
+            },
+        ]);
+
+        return {
+            total: result[0].total.length ? result[0].total[0].total : 0,
+            list: result[0].list,
+        };
     }
 
     /**
@@ -123,20 +122,50 @@ export class UserService {
     /**
      * TODO: CREATE WITH PAGINATION
      */
-    async getFriendRequest(id: string) {
-        return await this.userModel.find({
-            _id: { $ne: id },
-            $or: [
-                {friendRequest: { $in: id }},
-                {invites: { $in: id }},
-            ],
-        }).select(`
-            firstname
-            lastname
-            email
-            username
-            invites
-        `).exec();
+    async getFriendRequest(params: {
+        id: string,
+        search?: string,
+        pagination: PaginationInterface,
+    }) {
+
+        const searchKey = params.search ? params.search.trim() : '';
+        const query = [
+            {
+                $match: {
+                    _id: { $ne: mongoose.Types.ObjectId(params.id) },
+                    $and: [
+                        {
+                            $or: [
+                                {friendRequest: { $in: [mongoose.Types.ObjectId(params.id)] }},
+                                {invites: { $in: [mongoose.Types.ObjectId(params.id)] }},
+                            ],
+                        },
+                        {
+                            $or: [
+                                { email: { $regex: searchKey, $options: 'i' } },
+                                { firstname: { $regex: searchKey, $options: 'i' } },
+                                { lastname: { $regex: searchKey, $options: 'i' } },
+                            ],
+                        },
+                    ],
+                },
+            },
+        ];
+        return await this.getAllFriends(query, params.pagination);
+
+        // return await this.userModel.find({
+        //     _id: { $ne: params.id },
+        //     $or: [
+        //         {friendRequest: { $in: params.id }},
+        //         {invites: { $in: params.id }},
+        //     ],
+        // }).select(`
+        //     firstname
+        //     lastname
+        //     email
+        //     username
+        //     invites
+        // `).exec();
     }
 
     async cancelInvitation(by: string, to: string) {
