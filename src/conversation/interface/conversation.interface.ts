@@ -1,11 +1,8 @@
-export interface MessageInterface {
-    from: string;
-    message: string;
-    date?: string;
-    seen?: string[];
-}
+import { ConversationType } from './conversation.type.enum';
+import { MessageInterface } from './message.interface';
 
 export interface ConversationInterface {
+    type: ConversationType;
     members: string[];
     messages: MessageInterface[];
 }

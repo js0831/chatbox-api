@@ -4,6 +4,7 @@ import { ConversationDto } from './dto/conversation.dto';
 import { ResponseModel } from 'src/shared/interface/response.model';
 import { ConversationService } from './conversation.service';
 import { MessageDto } from './dto/message.dto';
+import { ConversationInterface } from './interface/conversation.interface';
 
 @Controller('conversation')
 export class ConversationController {
@@ -14,21 +15,7 @@ export class ConversationController {
 
     }
 
-    // @Post()
-    // @UseGuards(AuthGuard)
-    // async create(
-    //     @Body() {
-    //         members,
-    //     }: ConversationDto): Promise<ResponseModel> {
-    //         const convo = await this.srv.create({members});
-    //         return {
-    //             statusCode: HttpStatus.OK,
-    //             message: 'success',
-    //             data: convo,
-    //         };
-    // }
-
-    // @Get('id/:ida/:idb')
+    // @Get('id/')
     // @UseGuards(AuthGuard)
     // async getConversation(
     //     @Param() params,
@@ -41,18 +28,26 @@ export class ConversationController {
     //     };
     // }
 
-    // @Get(':id')
-    // @UseGuards(AuthGuard)
-    // async getConversationMessages(
-    //     @Param() params,
-    // ): Promise<ResponseModel> {
-    //     const convo = await this.srv.getConversationMessages(params.id);
-    //     return {
-    //         statusCode: HttpStatus.OK,
-    //         message: 'success',
-    //         data: convo,
-    //     };
-    // }
+    @Get(':id/type/:type')
+    @UseGuards(AuthGuard)
+    async getConversations(
+        @Param() params,
+    ): Promise<ResponseModel<{
+        total: number,
+        list: ConversationInterface[],
+    }>> {
+        const {type, id} = params;
+        const convos = await this.srv.getConversations({
+            id,
+            type,
+            search: '',
+        });
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'success',
+            data: convos,
+        };
+    }
 
     // @Post('message')
     // @UseGuards(AuthGuard)

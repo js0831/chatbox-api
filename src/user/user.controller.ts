@@ -6,12 +6,14 @@ import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { ConversationService } from 'src/conversation/conversation.service';
 import { UserInterface } from './interfaces/user.interface';
 import { PaginationInterface } from 'src/shared/interface/pagination.interface';
+import { ConversationType } from 'src/conversation/interface/conversation.type.enum';
 
 @Controller('user')
 export class UserController {
 
     constructor(
         private srv: UserService,
+        private conversationSV: ConversationService,
     ) {}
 
     @Post()
@@ -184,6 +186,9 @@ export class UserController {
         } else
         if (params.respond === 'accept') {
             await this.srv.acceptFriendRequest(by, to);
+            await this.conversationSV.create({type: ConversationType.PERSONAL, members: [
+                by, to,
+            ]});
         }
         return {
             statusCode: HttpStatus.OK,
