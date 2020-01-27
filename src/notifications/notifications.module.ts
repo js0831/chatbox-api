@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { MessageNotificationController } from './message-notification/message-notification.controller';
 import { NotificationsService } from './notifications.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { MessageNotificationSchema } from './schema/message-notification.schema';
 import { JwtModule } from '@nestjs/jwt';
+import { NotificationSchema } from './notification.schema';
+import { NotificationController } from './notification.controller';
 
 @Module({
   imports: [
@@ -12,11 +12,11 @@ import { JwtModule } from '@nestjs/jwt';
       signOptions: { expiresIn: '1h' },
     }),
     MongooseModule.forFeature([
-      { name: 'MessageNotification', schema: MessageNotificationSchema },
+      { name: 'Notification', schema: NotificationSchema },
     ]),
   ],
   controllers: [
-    MessageNotificationController,
+    NotificationController,
   ],
   providers: [
     NotificationsService,

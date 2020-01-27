@@ -1,39 +1,46 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { MessageNotificationInterface } from './interface/message-notification.interface';
+import { NotificationInterface } from './interface/notification.interface';
 import { Model } from 'mongoose';
+import { NotificationDTO } from './dto/notification.dto';
 
 @Injectable()
 export class NotificationsService {
 
     constructor(
-        @InjectModel('MessageNotification') private msgNotification: Model<MessageNotificationInterface>,
+        @InjectModel('Notification') private notification: Model<NotificationInterface>,
     ) {
 
     }
 
-    async create(msgNotif: MessageNotificationInterface): Promise<MessageNotificationInterface> {
-        return await new this.msgNotification(msgNotif).save();
+    async create(msgNotif: NotificationDTO): Promise<NotificationInterface> {
+        return await new this.notification(msgNotif).save();
     }
 
-    async getMessageNotifications(conversation: string, from: string, member: string): Promise<MessageNotificationInterface[]> {
-        const notifs = await this.msgNotification.find({
-            conversation,
-            from,
-            members: { $in: member },
+    async getList(id: string): Promise<NotificationInterface[]> {
+        return await this.notification.find({
+            user: id,
         }).exec();
-        return notifs;
     }
 
-    async clearMessageNotification(conversation: string, from: string, member: string) {
-        await this.msgNotification.updateMany(
-            {
-                conversation,
-                from,
-            },
-            { $pull: { members: member }},
-            { new: true},
-        );
-        await this.msgNotification.deleteMany({ 'members.0': { $exists: false } });
-    }
+    // async getMessageNotifications(conversation: string, from: string, member: string): Promise<MessageNotificationInterface[]> {
+    //     const notifs = await this.msgNotification.find({
+    //         conversation,
+    //         from,
+    //         members: { $in: member },
+    //     }).exec();
+    //     return notifs;
+    // }
+
+    // async clearMessageNotification(conversation: string, from: string, member: string) {
+    //     await this.msgNotification.updateMany(
+    //         {
+    //             conversation,
+    //             from,
+    //         },
+    //         { $pull: { members: member }},
+    //         { new: true},
+    //     );
+    //     await this.msgNotification.deleteMany({ 'members.0': { $exists: false } });
+    // }
 }
