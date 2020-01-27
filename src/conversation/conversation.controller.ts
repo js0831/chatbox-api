@@ -5,6 +5,7 @@ import { ResponseModel } from 'src/shared/interface/response.model';
 import { ConversationService } from './conversation.service';
 import { MessageDto } from './dto/message.dto';
 import { ConversationInterface } from './interface/conversation.interface';
+import { MessageInterface } from './interface/message.interface';
 
 @Controller('conversation')
 export class ConversationController {
@@ -49,23 +50,23 @@ export class ConversationController {
         };
     }
 
-    // @Post('message')
-    // @UseGuards(AuthGuard)
-    // async sendMessage(
-    //     @Body() {
-    //         message,
-    //         from,
-    //         conversationId,
-    //     }: MessageDto): Promise<ResponseModel> {
-    //         const msg = await this.srv.sendMessage({
-    //             message,
-    //             from,
-    //             conversationId,
-    //         });
-    //         return {
-    //             statusCode: HttpStatus.OK,
-    //             message: 'success',
-    //             data: msg,
-    //         };
-    // }
+    @Post('message')
+    @UseGuards(AuthGuard)
+    async sendMessage(
+        @Body() {
+            message,
+            from,
+            conversationId,
+        }: MessageDto): Promise<ResponseModel<MessageInterface>> {
+            const msg = await this.srv.sendMessage({
+                message,
+                from,
+                conversationId,
+            });
+            return {
+                statusCode: HttpStatus.OK,
+                message: 'success',
+                data: msg,
+            };
+    }
 }

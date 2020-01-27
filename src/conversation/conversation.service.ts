@@ -6,6 +6,7 @@ import { ConversationDto } from './dto/conversation.dto';
 import { ConversationType } from './interface/conversation.type.enum';
 import * as mongoose from 'mongoose';
 import { PaginationInterface } from 'src/shared/interface/pagination.interface';
+import { MessageDto } from './dto/message.dto';
 
 @Injectable()
 export class ConversationService {
@@ -89,18 +90,18 @@ export class ConversationService {
     //     .exec();
     // }
 
-    // async sendMessage({message, from, conversationId}: MessageDto) {
-    //     return this.conversationModel.updateOne(
-    //         { _id: conversationId },
-    //         {
-    //             $push:
-    //             {
-    //                 messages: {
-    //                     message,
-    //                     from,
-    //                 },
-    //             },
-    //         },
-    //     );
-    // }
+    async sendMessage({message, from, conversationId}: MessageDto) {
+        return this.conversationModel.updateOne(
+            { _id: conversationId },
+            {
+                $push:
+                {
+                    messages: {
+                        message,
+                        from,
+                    },
+                },
+            },
+        );
+    }
 }
