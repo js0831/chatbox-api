@@ -16,18 +16,18 @@ export class ConversationController {
 
     }
 
-    // @Get('id/')
-    // @UseGuards(AuthGuard)
-    // async getConversation(
-    //     @Param() params,
-    // ): Promise<ResponseModel> {
-    //     const convo = await this.srv.getConversation([params.ida, params.idb]);
-    //     return {
-    //         statusCode: HttpStatus.OK,
-    //         message: 'success',
-    //         data: convo,
-    //     };
-    // }
+    @Get(':id/messages')
+    @UseGuards(AuthGuard)
+    async getConversationMessages(
+        @Param() params,
+    ): Promise<ResponseModel<MessageInterface[]>> {
+        const convo = await this.srv.getConversationMessages(params.id);
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'success',
+            data: convo.messages,
+        };
+    }
 
     @Get(':id/type/:type')
     @UseGuards(AuthGuard)

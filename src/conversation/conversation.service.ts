@@ -76,19 +76,19 @@ export class ConversationService {
     //     });
     // }
 
-    // async getConversationMessages(id: string) {
-    //     /**
-    //      * TODO: pagination
-    //      */
-    //     return this.conversationModel.findOne({_id: id}, { messages: { $slice: -10 } })
-    //     .populate(
-    //         {
-    //             path: 'messages.from',
-    //             select: 'firstname lastname',
-    //         },
-    //     )
-    //     .exec();
-    // }
+    async getConversationMessages(id: string) {
+        /**
+         * TODO: pagination
+         */
+        return this.conversationModel.findOne({_id: id}, { messages: { $slice: -10 } })
+        .populate(
+            {
+                path: 'messages.from',
+                select: 'firstname lastname',
+            },
+        )
+        .exec();
+    }
 
     async sendMessage({message, from, conversationId}: MessageDto) {
         return this.conversationModel.updateOne(
