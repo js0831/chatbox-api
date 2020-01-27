@@ -4,8 +4,8 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConversationModule } from './conversation/conversation.module';
-import { ChatModule } from './chat/chat.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { WebSocketModule } from './websocket/websocket.module';
 
 @Module({
   imports: [
@@ -20,7 +20,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     ),
     UserModule,
     ConversationModule,
-    ChatModule,
+    WebSocketModule,
     NotificationsModule,
   ],
   controllers: [
