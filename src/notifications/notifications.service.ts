@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { NotificationInterface } from './interface/notification.interface';
 import { Model } from 'mongoose';
 import { NotificationDTO } from './dto/notification.dto';
+import { NotificationType } from './interface/notification-type.enum';
 
 @Injectable()
 export class NotificationsService {
@@ -21,6 +22,17 @@ export class NotificationsService {
         return await this.notification.find({
             user: id,
         }).exec();
+    }
+
+    async deleteNotificationByReference(params: {
+        id: string,
+        reference: string,
+    }) {
+        const { id, reference } = params;
+        await this.notification.deleteMany({
+            user: id,
+            reference,
+        });
     }
 
     // async getMessageNotifications(conversation: string, from: string, member: string): Promise<MessageNotificationInterface[]> {

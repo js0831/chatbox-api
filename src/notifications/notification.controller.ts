@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, HttpStatus, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, UseGuards, HttpStatus, Body, Get, Param, Delete } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { ResponseModel } from 'src/shared/interface/response.model';
@@ -47,6 +47,22 @@ export class NotificationController {
             statusCode: HttpStatus.OK,
             message: 'Success',
             data: notifs,
+        };
+    }
+
+    @Delete(':id/:reference')
+    @UseGuards(AuthGuard)
+    async delete(
+        @Param() params,
+    ): Promise<ResponseModel<any>> {
+        const { id, reference} = params;
+        await this.notifService.deleteNotificationByReference({
+            id,
+            reference,
+        });
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'Success',
         };
     }
 
