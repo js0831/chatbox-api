@@ -5,4 +5,5 @@ export interface NotificationInterface {
     type: NotificationType;
     reference: string;
     message: string;
+    seen: boolean;
 }

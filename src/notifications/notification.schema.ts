@@ -12,6 +12,10 @@ export const NotificationSchema = new mongoose.Schema({
   },
   message: String,
   reference: String,
+  seen: {
+    type: Boolean,
+    default: false,
+  },
   createdDate: {
     type: Date,
     default: Date.now,

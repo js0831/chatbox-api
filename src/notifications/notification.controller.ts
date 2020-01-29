@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, HttpStatus, Body, Get, Param, Delete } from '@nestjs/common';
+import { Controller, Post, UseGuards, HttpStatus, Body, Get, Param, Delete, Patch } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { ResponseModel } from 'src/shared/interface/response.model';
@@ -66,6 +66,17 @@ export class NotificationController {
         };
     }
 
+    @Patch(':id')
+    @UseGuards(AuthGuard)
+    async seen(
+        @Param() params,
+    ): Promise<ResponseModel<any>> {
+        await this.notifService.seenNotifications(params.id);
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'Success',
+        };
+    }
     // @Post('clear')
     // @UseGuards(AuthGuard)
     // async clearNotif(

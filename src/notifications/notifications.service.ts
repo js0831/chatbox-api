@@ -35,6 +35,13 @@ export class NotificationsService {
         });
     }
 
+    async seenNotifications(userId: string) {
+        await this.notification.updateMany({
+            user: userId,
+        }, {
+            seen: true,
+        });
+    }
     // async getMessageNotifications(conversation: string, from: string, member: string): Promise<MessageNotificationInterface[]> {
     //     const notifs = await this.msgNotification.find({
     //         conversation,
