@@ -50,15 +50,31 @@ export class NotificationController {
         };
     }
 
-    @Delete(':id/:reference')
+    @Delete('reference/:id/:reference')
     @UseGuards(AuthGuard)
-    async delete(
+    async deleteByReference(
         @Param() params,
     ): Promise<ResponseModel<any>> {
         const { id, reference} = params;
         await this.notifService.deleteNotificationByReference({
             id,
             reference,
+        });
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'Success',
+        };
+    }
+
+    @Delete('type/:id/:type')
+    @UseGuards(AuthGuard)
+    async deleteByType(
+        @Param() params,
+    ): Promise<ResponseModel<any>> {
+        const { id, type} = params;
+        await this.notifService.deleteNotificationByType({
+            id,
+            type,
         });
         return {
             statusCode: HttpStatus.OK,

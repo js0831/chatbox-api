@@ -35,6 +35,17 @@ export class NotificationsService {
         });
     }
 
+    async deleteNotificationByType(params: {
+        id: string,
+        type: NotificationType,
+    }) {
+        const { id, type } = params;
+        await this.notification.deleteMany({
+            user: id,
+            type,
+        });
+    }
+
     async seenNotifications(userId: string) {
         await this.notification.updateMany({
             user: userId,
