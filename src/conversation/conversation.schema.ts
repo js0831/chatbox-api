@@ -33,3 +33,5 @@ export const ConversationSchema = new mongoose.Schema({
     },
   ],
 });
+
+ConversationSchema.set('timestamps', true);
