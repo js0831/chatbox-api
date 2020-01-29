@@ -16,8 +16,9 @@ export class ConversationService {
     ) {}
 
     async create(convoDto: ConversationDto): Promise<ConversationInterface> {
-        const createdConvo = new this.conversationModel(convoDto);
-        return await createdConvo.save();
+        const createdConvo = await new this.conversationModel(convoDto).save();
+        return this.conversationModel.populate(createdConvo, 'members');
+        // createdConvo;
     }
 
     async getConversations(params: {
@@ -75,6 +76,12 @@ export class ConversationService {
     //         _id: id,
     //     });
     // }
+
+    async deleteByMembers(members: string[]): Promise<any> {
+        return await this.conversationModel.findOneAndRemove({
+            members: { $all: members },
+        });
+    }
 
     async getConversationMessages(id: string) {
         /**

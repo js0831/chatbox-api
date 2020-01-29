@@ -5,12 +5,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { PaginationInterface } from 'src/shared/interface/pagination.interface';
 import * as mongoose from 'mongoose';
+import { ConversationService } from 'src/conversation/conversation.service';
 
 @Injectable()
 export class UserService {
 
     constructor(
         @InjectModel('User') private userModel: Model<UserInterface>,
+        private conversationService: ConversationService,
     ) {}
 
     async findUserByAccountId(id: string): Promise<UserInterface> {
@@ -235,6 +237,7 @@ export class UserService {
                 $pull: { friends: by },
             },
         );
+        return await this.conversationService.deleteByMembers([who, by]);
     }
 
     // async getUserFriends(id: string, type: string): Promise<UserInterface> {

@@ -7,6 +7,7 @@ import { ConversationService } from 'src/conversation/conversation.service';
 import { UserInterface } from './interfaces/user.interface';
 import { PaginationInterface } from 'src/shared/interface/pagination.interface';
 import { ConversationType } from 'src/conversation/interface/conversation.type.enum';
+import { ConversationInterface } from 'src/conversation/interface/conversation.interface';
 
 @Controller('user')
 export class UserController {
@@ -135,10 +136,11 @@ export class UserController {
     async unfriend(
         @Body() {who, by}: any,
     ): Promise<ResponseModel<any>> {
-        await this.srv.unfriend(who, by);
+        const conversation = await this.srv.unfriend(who, by);
         return {
             statusCode: HttpStatus.OK,
             message: 'success',
+            data: conversation,
         };
     }
 
@@ -181,18 +183,20 @@ export class UserController {
         @Param() params,
         @Body() {by, to}: any,
     ): Promise<ResponseModel<any>> {
+        let conversation: ConversationInterface;
         if (params.respond === 'reject') {
             await this.srv.rejectFriendRequest(by, to);
         } else
         if (params.respond === 'accept') {
             await this.srv.acceptFriendRequest(by, to);
-            await this.conversationSV.create({type: ConversationType.PERSONAL, members: [
+            conversation = await this.conversationSV.create({type: ConversationType.PERSONAL, members: [
                 by, to,
             ]});
         }
         return {
             statusCode: HttpStatus.OK,
             message: 'success',
+            data: conversation,
         };
     }
 
