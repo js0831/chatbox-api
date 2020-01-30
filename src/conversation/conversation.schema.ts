@@ -8,6 +8,11 @@ export const ConversationSchema = new mongoose.Schema({
     default: 'PERSONAL',
     required: true,
   },
+  name: {
+    type: String,
+    maxlength: 22,
+    required: false,
+  },
   members: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -32,6 +37,11 @@ export const ConversationSchema = new mongoose.Schema({
       },
     },
   ],
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
 });
 
 ConversationSchema.set('timestamps', true);

@@ -189,9 +189,14 @@ export class UserController {
         } else
         if (params.respond === 'accept') {
             await this.srv.acceptFriendRequest(by, to);
-            conversation = await this.conversationSV.create({type: ConversationType.PERSONAL, members: [
-                by, to,
-            ]});
+            conversation = await this.conversationSV.create({
+                type: ConversationType.PERSONAL,
+                members: [
+                    by,
+                    to,
+                ],
+                createdBy: by,
+            });
         }
         return {
             statusCode: HttpStatus.OK,

@@ -16,6 +16,29 @@ export class ConversationController {
 
     }
 
+    @Post()
+    @UseGuards(AuthGuard)
+    async create(
+        @Body() {
+            type,
+            name,
+            members,
+            createdBy,
+        }: ConversationDto,
+    ): Promise<ResponseModel<ConversationInterface>> {
+        const convo = await this.srv.create({
+            type,
+            name,
+            members,
+            createdBy,
+        });
+        return {
+            message: '',
+            statusCode: HttpStatus.OK,
+            data: convo,
+        };
+    }
+
     @Get(':id/messages')
     @UseGuards(AuthGuard)
     async getConversationMessages(

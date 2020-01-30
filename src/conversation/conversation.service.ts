@@ -39,7 +39,7 @@ export class ConversationService {
             members: {
                 firstname: 1,
             },
-        }).sort({ updatedAt: -1 }).populate('members', 'firstname lastname').select('type members').exec();
+        }).sort({ updatedAt: -1 }).populate('members', 'firstname lastname').select('type members name').exec();
 
         // const query = [
         //     {
