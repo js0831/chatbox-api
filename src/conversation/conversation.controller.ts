@@ -22,11 +22,20 @@ export class ConversationController {
         @Param() params,
     ): Promise<ResponseModel<MessageInterface[]>> {
         const convo = await this.srv.getConversationMessages(params.id);
-        return {
-            statusCode: HttpStatus.OK,
-            message: 'success',
-            data: convo.messages,
-        };
+
+        if (convo) {
+            return {
+                statusCode: HttpStatus.OK,
+                message: 'success',
+                data: convo.messages,
+            };
+        } else {
+            return {
+                statusCode: HttpStatus.NOT_FOUND,
+                message: 'Conversation do not exist!',
+                data: [],
+            };
+        }
     }
 
     @Get(':id/type/:type')
