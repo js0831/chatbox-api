@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, Body, Get, Param, HttpStatus } from '@nestjs/common';
+import { Controller, Post, UseGuards, Body, Get, Param, HttpStatus, Patch, Delete } from '@nestjs/common';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { ConversationDto } from './dto/conversation.dto';
 import { ResponseModel } from 'src/shared/interface/response.model';
@@ -100,5 +100,35 @@ export class ConversationController {
                 message: 'success',
                 data: msg,
             };
+    }
+
+    @Patch('leave')
+    @UseGuards(AuthGuard)
+    async leaveConversation(
+        @Body() {
+            user,
+            conversation,
+        }: any,
+    ): Promise<ResponseModel<any>> {
+        await this.srv.leaveConversation({
+            user,
+            conversation,
+        });
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'success',
+        };
+    }
+
+    @Delete(':conversation')
+    @UseGuards(AuthGuard)
+    async deleteConversation(
+        @Param() params,
+    ): Promise<ResponseModel<any>> {
+        await this.srv.delete(params.conversation);
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'success',
+        };
     }
 }

@@ -39,7 +39,7 @@ export class ConversationService {
             members: {
                 firstname: 1,
             },
-        }).sort({ updatedAt: -1 }).populate('members', 'firstname lastname').select('type members name').exec();
+        }).sort({ updatedAt: -1 }).populate('members', 'firstname lastname').select('type members name createdBy').exec();
 
         // const query = [
         //     {
@@ -83,7 +83,7 @@ export class ConversationService {
         });
     }
 
-    async getConversationMessages(id: string) {
+    async getConversationMessages(id: string): Promise<any> {
         /**
          * TODO: pagination
          */
@@ -97,7 +97,7 @@ export class ConversationService {
         .exec();
     }
 
-    async sendMessage({message, from, conversationId}: MessageDto) {
+    async sendMessage({message, from, conversationId}: MessageDto): Promise<any> {
         return this.conversationModel.updateOne(
             { _id: conversationId },
             {
@@ -110,5 +110,24 @@ export class ConversationService {
                 },
             },
         );
+    }
+
+    async leaveConversation(params: {
+        user: string,
+        conversation: string,
+    }): Promise<any> {
+        return this.conversationModel.updateOne(
+            { _id: params.conversation },
+            {
+                $pull:
+                {
+                    members: params.user,
+                },
+            },
+        );
+    }
+
+    async delete(conversation: string): Promise<any> {
+        return this.conversationModel.deleteOne({ _id: conversation });
     }
 }
