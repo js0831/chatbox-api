@@ -112,6 +112,20 @@ export class ConversationService {
         );
     }
 
+    async addMember(params: {
+        conversation: string, user: string,
+    }): Promise<any> {
+        return this.conversationModel.updateOne(
+            { _id: params.conversation },
+            {
+                $push:
+                {
+                    members: params.user,
+                },
+            },
+        );
+    }
+
     async leaveConversation(params: {
         user: string,
         conversation: string,

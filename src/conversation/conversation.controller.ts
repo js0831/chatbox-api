@@ -120,6 +120,24 @@ export class ConversationController {
         };
     }
 
+    @Patch('member')
+    @UseGuards(AuthGuard)
+    async addMember(
+        @Body() {
+            user,
+            conversation,
+        }: any,
+    ): Promise<ResponseModel<any>> {
+        await this.srv.addMember({
+            user,
+            conversation,
+        });
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'success',
+        };
+    }
+
     @Delete(':conversation')
     @UseGuards(AuthGuard)
     async deleteConversation(
