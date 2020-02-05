@@ -6,6 +6,8 @@ import { UserSchema } from './user.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { ConversationService } from 'src/conversation/conversation.service';
 import { ConversationSchema } from 'src/conversation/conversation.schema';
+import { NotificationsService } from 'src/notifications/notifications.service';
+import { NotificationSchema } from 'src/notifications/notification.schema';
 
 @Module({
   imports: [
@@ -16,6 +18,7 @@ import { ConversationSchema } from 'src/conversation/conversation.schema';
     MongooseModule.forFeature([
       { name: 'User', schema: UserSchema },
       { name: 'Conversation', schema: ConversationSchema },
+      { name: 'Notification', schema: NotificationSchema },
     ]),
   ],
   controllers: [
@@ -24,6 +27,7 @@ import { ConversationSchema } from 'src/conversation/conversation.schema';
   providers: [
     UserService,
     ConversationService,
+    NotificationsService,
   ],
 })
 export class UserModule {}

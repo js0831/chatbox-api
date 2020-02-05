@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { PaginationInterface } from 'src/shared/interface/pagination.interface';
 import * as mongoose from 'mongoose';
 import { ConversationService } from 'src/conversation/conversation.service';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class UserService {
@@ -13,6 +14,7 @@ export class UserService {
     constructor(
         @InjectModel('User') private userModel: Model<UserInterface>,
         private conversationService: ConversationService,
+        private notificationService: NotificationsService,
     ) {}
 
     async findUserByAccountId(id: string): Promise<UserInterface> {
@@ -237,7 +239,13 @@ export class UserService {
                 $pull: { friends: by },
             },
         );
-        return await this.conversationService.deleteByMembers([who, by]);
+        const conversation = await this.conversationService.deleteByMembers([who, by]);
+        // conversation._id
+        await this.notificationService.deleteNotificationByReference({
+            id: who,
+            reference: conversation._id,
+        });
+        return conversation;
     }
 
     // async getUserFriends(id: string, type: string): Promise<UserInterface> {
