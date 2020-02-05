@@ -61,6 +61,32 @@ export class ConversationController {
         }
     }
 
+    @Get(':id/messages/:page/:limit')
+    @UseGuards(AuthGuard)
+    async getConversationMessagesWithPagination(
+        @Param() params,
+    ): Promise<ResponseModel<MessageInterface[]>> {
+        const pagination = {
+            page: parseInt(params.page, 0),
+            limit: parseInt(params.limit, 0),
+        };
+        const convo = await this.srv.getConversationMessages(params.id, pagination);
+
+        if (convo) {
+            return {
+                statusCode: HttpStatus.OK,
+                message: 'success',
+                data: convo.messages,
+            };
+        } else {
+            return {
+                statusCode: HttpStatus.NOT_FOUND,
+                message: 'Conversation do not exist!',
+                data: [],
+            };
+        }
+    }
+
     @Get(':id/type/:type')
     @UseGuards(AuthGuard)
     async getConversations(

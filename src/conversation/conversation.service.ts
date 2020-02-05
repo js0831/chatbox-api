@@ -83,11 +83,24 @@ export class ConversationService {
         });
     }
 
-    async getConversationMessages(id: string): Promise<any> {
+    async getConversationMessages(id: string, pagination?: {
+        page: number,
+        limit: number,
+    }): Promise<any> {
+
+        const defaultPagination = pagination || {
+            page: 0,
+            limit: 2,
+        };
+        const skip = (defaultPagination.limit * defaultPagination.page);
+
+        const sliceOptions = pagination ? [skip * -1, defaultPagination.limit] : -2;
         /**
          * TODO: pagination
          */
-        return this.conversationModel.findOne({_id: id}, { messages: { $slice: -10 } })
+        return this.conversationModel.findOne(
+            {_id: id},
+            { messages: { $slice: sliceOptions } })
         .populate(
             {
                 path: 'messages.from',
