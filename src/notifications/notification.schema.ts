@@ -7,7 +7,7 @@ export const NotificationSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['MESSAGE', 'FRIEND_REQUEST', 'FRIEND_REQUEST_ACCEPT', 'GROUP_INVITATION'],
+    enum: ['MESSAGE', 'FRIEND_REQUEST', 'FRIEND_REQUEST_ACCEPT', 'GROUP_INVITATION', 'GROUP_MEMBER_ADD'],
     required: true,
   },
   message: String,
