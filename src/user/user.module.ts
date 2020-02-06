@@ -8,6 +8,7 @@ import { ConversationService } from 'src/conversation/conversation.service';
 import { ConversationSchema } from 'src/conversation/conversation.schema';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { NotificationSchema } from 'src/notifications/notification.schema';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { NotificationSchema } from 'src/notifications/notification.schema';
       { name: 'Conversation', schema: ConversationSchema },
       { name: 'Notification', schema: NotificationSchema },
     ]),
+    MulterModule,
   ],
   controllers: [
     UserController,

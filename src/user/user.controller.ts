@@ -1,4 +1,16 @@
-import { Controller, Post, Body, Get, Param, UseGuards, HttpStatus } from '@nestjs/common';
+import {
+    Controller,
+    Post,
+    Body,
+    Get,
+    Param,
+    UseGuards,
+    HttpStatus,
+    UseInterceptors,
+    UploadedFile,
+    Res,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { UserDto } from './dto/user.dto';
 import { ResponseModel } from 'src/shared/interface/response.model';
 import { UserService } from './user.service';
@@ -8,6 +20,8 @@ import { UserInterface } from './interfaces/user.interface';
 import { PaginationInterface } from 'src/shared/interface/pagination.interface';
 import { ConversationType } from 'src/conversation/interface/conversation.type.enum';
 import { ConversationInterface } from 'src/conversation/interface/conversation.interface';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Controller('user')
 export class UserController {
@@ -205,6 +219,38 @@ export class UserController {
         };
     }
 
+    @Post('upload')
+    @UseInterceptors(
+        FileInterceptor('file', {
+            storage: diskStorage({
+                destination: './files',
+                filename: (req, file, callback) => {
+                    const name = file.originalname.split('.')[0];
+                    const fileExtName = extname(file.originalname);
+                    const randomName = Array(4)
+                      .fill(null)
+                      .map(() => Math.round(Math.random() * 16).toString(16))
+                      .join('');
+                    callback(null, `${name}-${randomName}${fileExtName}`);
+                },
+            }),
+            fileFilter: (req, file, callback) => {
+                if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+                    return callback(new Error('Only image files are allowed!'), false);
+                }
+                callback(null, true);
+            },
+            limits: {fileSize: 500 * 500 },
+        }))
+    uploadFile(@UploadedFile() file) {
+        console.log(file);
+    }
+
+    @Get(':imgpath')
+    seeUploadedFile(@Param('imgpath') image, @Res() res) {
+        return res.sendFile(image, { root: './files' });
+    }
+
     // constructor(
     //     private srv: UserService,
     //     private conversationService: ConversationService,
@@ -236,7 +282,7 @@ export class UserController {
     //     };
     // }
 
-
+    
     // @Post('invite/cancel')
     // @UseGuards(AuthGuard)
     // async cancelInvite(
