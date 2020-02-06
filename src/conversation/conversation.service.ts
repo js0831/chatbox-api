@@ -89,12 +89,12 @@ export class ConversationService {
     }): Promise<any> {
 
         const defaultPagination = pagination || {
-            page: 0,
-            limit: 2,
+            page: 1,
+            limit: 10,
         };
         const skip = (defaultPagination.limit * defaultPagination.page);
 
-        const sliceOptions = pagination ? [skip * -1, defaultPagination.limit] : -2;
+        const sliceOptions = pagination ? [skip * -1, defaultPagination.limit] : defaultPagination.limit * -1;
         /**
          * TODO: pagination
          */
