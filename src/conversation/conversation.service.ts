@@ -157,4 +157,15 @@ export class ConversationService {
     async delete(conversation: string): Promise<any> {
         return this.conversationModel.deleteOne({ _id: conversation });
     }
+
+    async rename(id: string, newName: string): Promise<any> {
+        return this.conversationModel.updateOne(
+            {
+                _id: id,
+            },
+            {
+                name: newName,
+            },
+        );
+    }
 }

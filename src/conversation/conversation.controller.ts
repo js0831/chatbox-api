@@ -146,6 +146,21 @@ export class ConversationController {
         };
     }
 
+    @Patch('rename')
+    @UseGuards(AuthGuard)
+    async rename(
+        @Body() {
+            id,
+            name,
+        }: any,
+    ): Promise<ResponseModel<any>> {
+        await this.srv.rename(id, name);
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'success',
+        };
+    }
+
     @Patch('member')
     @UseGuards(AuthGuard)
     async addMember(
