@@ -219,19 +219,15 @@ export class UserController {
         };
     }
 
-    @Post('upload')
+    @Post('upload/:id')
+    @UseGuards(AuthGuard)
     @UseInterceptors(
         FileInterceptor('file', {
             storage: diskStorage({
                 destination: './files',
                 filename: (req, file, callback) => {
-                    const name = file.originalname.split('.')[0];
-                    const fileExtName = extname(file.originalname);
-                    const randomName = Array(4)
-                      .fill(null)
-                      .map(() => Math.round(Math.random() * 16).toString(16))
-                      .join('');
-                    callback(null, `${name}-${randomName}${fileExtName}`);
+                    const fileExtName = '.jpg'; // xtname(file.originalname);
+                    callback(null, `${req.params.id}${fileExtName}`);
                 },
             }),
             fileFilter: (req, file, callback) => {
@@ -242,8 +238,15 @@ export class UserController {
             },
             limits: {fileSize: 500 * 500 },
         }))
-    uploadFile(@UploadedFile() file) {
-        console.log(file);
+    uploadFile(
+        @UploadedFile() file,
+        @Param() params,
+    ) {
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'success',
+            data: file.filename,
+        };
     }
 
     @Get(':imgpath')
@@ -282,7 +285,6 @@ export class UserController {
     //     };
     // }
 
-    
     // @Post('invite/cancel')
     // @UseGuards(AuthGuard)
     // async cancelInvite(
