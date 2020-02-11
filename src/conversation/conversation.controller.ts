@@ -128,6 +128,23 @@ export class ConversationController {
             };
     }
 
+    @Post('react')
+    @UseGuards(AuthGuard)
+    async react(
+        @Body() {
+            messageId,
+            reaction,
+        }: any): Promise<ResponseModel<any>> {
+            await this.srv.react({
+                messageId,
+                reaction,
+            });
+            return {
+                statusCode: HttpStatus.OK,
+                message: 'success',
+            };
+    }
+
     @Patch('leave')
     @UseGuards(AuthGuard)
     async leaveConversation(

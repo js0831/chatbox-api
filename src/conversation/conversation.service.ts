@@ -100,13 +100,10 @@ export class ConversationService {
          */
         return this.conversationModel.findOne(
             {_id: id},
-            { messages: { $slice: sliceOptions } })
-        .populate(
-            {
-                path: 'messages.from',
-                select: 'firstname lastname',
-            },
+            { messages: { $slice: sliceOptions } }
         )
+        .populate({ path: 'messages.from', select: 'firstname lastname' })
+        .populate({ path: 'messages.reactions.by', select: 'firstname'})
         .exec();
     }
 
@@ -165,6 +162,39 @@ export class ConversationService {
             },
             {
                 name: newName,
+            },
+        );
+    }
+
+    async react(params: {
+        messageId: string,
+        reaction: {
+            by: string,
+            reaction: string,
+        },
+    }) {
+        await this.conversationModel.updateOne(
+            {
+                'messages._id': params.messageId,
+            },
+            {
+                $pull:
+                {
+                    'messages.$.reactions': {
+                        by: params.reaction.by,
+                    },
+                },
+            },
+        );
+        return this.conversationModel.updateOne(
+            {
+                'messages._id': params.messageId,
+            },
+            {
+                $push:
+                {
+                    'messages.$.reactions': params.reaction,
+                },
             },
         );
     }

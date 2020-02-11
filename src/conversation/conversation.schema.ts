@@ -31,6 +31,34 @@ export const ConversationSchema = new mongoose.Schema({
         required: true,
         maxlength: 250,
       },
+      reactions: [
+        {
+          by: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true,
+          },
+          reaction: {
+            type: String,
+            enum: [
+              'HAIZT',
+              'SHIT',
+              'FU',
+              'ROCK',
+              'CRYING',
+              'ANGRY',
+              'SHOCKED',
+              'CLAP',
+              'LOVE',
+              'LAUGH',
+              'AGREE',
+              'DISAGREE',
+              'TOUNGE',
+              'THINKING',
+            ],
+          },
+        },
+      ],
       date: {
         type: Date,
         default: Date.now,
