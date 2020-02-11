@@ -108,18 +108,21 @@ export class ConversationService {
     }
 
     async sendMessage({message, from, conversationId}: MessageDto): Promise<any> {
-        return this.conversationModel.updateOne(
+        const id = mongoose.Types.ObjectId();
+        await this.conversationModel.updateOne(
             { _id: conversationId },
             {
                 $push:
                 {
                     messages: {
+                        _id: id,
                         message,
                         from,
                     },
                 },
             },
         );
+        return id;
     }
 
     async addMember(params: {

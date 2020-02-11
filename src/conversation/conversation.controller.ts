@@ -116,7 +116,7 @@ export class ConversationController {
             from,
             conversationId,
         }: MessageDto): Promise<ResponseModel<MessageInterface>> {
-            const msg = await this.srv.sendMessage({
+            const msgId = await this.srv.sendMessage({
                 message,
                 from,
                 conversationId,
@@ -124,7 +124,7 @@ export class ConversationController {
             return {
                 statusCode: HttpStatus.OK,
                 message: 'success',
-                data: msg,
+                data: msgId,
             };
     }
 
