@@ -231,7 +231,8 @@ export class UserController {
                 },
             }),
             fileFilter: (req, file, callback) => {
-                if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+                const filename = file.originalname.toLowerCase();
+                if (!filename.match(/\.(jpg|jpeg|png|gif)$/)) {
                     return callback(new Error('Only image files are allowed!'), false);
                 }
                 callback(null, true);
