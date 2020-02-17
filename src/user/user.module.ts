@@ -14,7 +14,7 @@ import { MulterModule } from '@nestjs/platform-express';
   imports: [
     JwtModule.register({
       secret: 'ckret!walang|clue:p',
-      signOptions: { expiresIn: '1h' },
+      signOptions: { expiresIn: '18h' },
     }),
     MongooseModule.forFeature([
       { name: 'User', schema: UserSchema },

@@ -9,7 +9,7 @@ import { ConversationSchema } from './conversation.schema';
   imports: [
     JwtModule.register({
       secret: 'ckret!walang|clue:p',
-      signOptions: { expiresIn: '1h' },
+      signOptions: { expiresIn: '18h' },
     }),
     MongooseModule.forFeature([
       { name: 'Conversation', schema: ConversationSchema },
